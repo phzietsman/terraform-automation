@@ -1,4 +1,7 @@
-resource tfe_workspace this {
+resource "tfe_workspace" "this" {
+
+  count = local.create_workspace
+
   organization = var.tfe_organization
 
   name              = var.workspace_content.workspace["workspace_name"]
@@ -15,10 +18,10 @@ resource tfe_workspace this {
   }
 }
 
-// All workspaces will get this variable
-resource tfe_variable aws_account_id {
-
-  workspace_id = tfe_workspace.this.id
+// All workspaces will get these variables
+resource "tfe_variable" "aws_account_id" {
+  count        = local.create_workspace
+  workspace_id = tfe_workspace.this[0].id
 
   key         = "aws_account_id"
   value       = var.workspace_content.aws_account_id
@@ -27,9 +30,9 @@ resource tfe_variable aws_account_id {
   sensitive   = false
 }
 
-resource tfe_variable aws_access_key_id {
-
-  workspace_id = tfe_workspace.this.id
+resource "tfe_variable" "aws_access_key_id" {
+  count        = local.create_workspace
+  workspace_id = tfe_workspace.this[0].id
 
   key         = "AWS_ACCESS_KEY_ID"
   value       = var.workspace_content.use_main_aws_credentials ? var.aws_access_key_id : "SET ME"
@@ -38,9 +41,9 @@ resource tfe_variable aws_access_key_id {
   sensitive   = false
 }
 
-resource tfe_variable aws_secret_access_key {
-
-  workspace_id = tfe_workspace.this.id
+resource "tfe_variable" "aws_secret_access_key" {
+  count        = local.create_workspace
+  workspace_id = tfe_workspace.this[0].id
 
   key         = "AWS_SECRET_ACCESS_KEY"
   value       = var.workspace_content.use_main_aws_credentials ? var.aws_secret_access_key : "SET ME"
@@ -51,36 +54,50 @@ resource tfe_variable aws_secret_access_key {
 
 locals {
 
-  tf_variables = {
-    for _, value in try(var.workspace_content.workspace["variables"]["terraform"], []) :
+  default_variables_pre_check = {
+    for _, value in try(var.workspace_content.workspace["variables"]["default"], []) :
     value["key"] => {
       key         = value["key"]
       value       = value["value"]
-      description       = value["description"]
-      sensitive = try(value["sensitive"], false)
+      description = value["description"]
+      sensitive   = try(value["sensitive"], false)
       hcl         = try(value["hcl"], false)
     }
   }
 
-  env_variables = {
+  tf_variables_pre_check = {
+    for _, value in try(var.workspace_content.workspace["variables"]["terraform"], []) :
+    value["key"] => {
+      key         = value["key"]
+      value       = value["value"]
+      description = value["description"]
+      sensitive   = try(value["sensitive"], false)
+      hcl         = try(value["hcl"], false)
+    }
+  }
+
+  env_variables_pre_check = {
     for _, value in try(var.workspace_content.workspace["variables"]["environment"], []) :
     value["key"] => {
       key         = value["key"]
       value       = value["value"]
-      description       = value["description"]
-      sensitive = try(value["sensitive"], false)
+      description = value["description"]
+      sensitive   = try(value["sensitive"], false)
     }
   }
 
+  default_variables = local.create_workspace ? local.default_variables_pre_check : {}
+  tf_variables      = local.create_workspace ? local.tf_variables_pre_check : {}
+  env_variables     = local.create_workspace ? local.env_variables_pre_check : {}
 
 }
 
-/* Dynamic Terraform Variables */
-resource tfe_variable terraform {
-  for_each = local.tf_variables
 
-  workspace_id = tfe_workspace.this.id
-  category    = "terraform"
+resource "tfe_variable" "default" {
+  for_each = local.default_variables
+
+  workspace_id = tfe_workspace.this[0].id
+  category     = "terraform"
 
   key         = each.value["key"]
   value       = each.value["value"]
@@ -89,11 +106,25 @@ resource tfe_variable terraform {
   hcl         = each.value["hcl"]
 }
 
-resource tfe_variable environment {
+/* Dynamic Terraform Variables */
+resource "tfe_variable" "terraform" {
+  for_each = local.tf_variables
+
+  workspace_id = tfe_workspace.this[0].id
+  category     = "terraform"
+
+  key         = each.value["key"]
+  value       = each.value["value"]
+  description = each.value["description"]
+  sensitive   = each.value["sensitive"]
+  hcl         = each.value["hcl"]
+}
+
+resource "tfe_variable" "environment" {
   for_each = local.env_variables
 
-  workspace_id = tfe_workspace.this.id
-  category    = "env"
+  workspace_id = tfe_workspace.this[0].id
+  category     = "env"
 
   key         = each.value["key"]
   value       = each.value["value"]

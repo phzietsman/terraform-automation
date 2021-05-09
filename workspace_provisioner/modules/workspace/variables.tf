@@ -1,30 +1,30 @@
-variable workspace_content {
-    description = "This will be used to provision the workspaces"
+variable "workspace_content" {
+  description = "This will be used to provision the workspaces"
 }
 
-variable tfe_organization {
+variable "tfe_organization" {
   type        = string
   description = "The TFC organization to create the workspaces in."
 }
 
 variable "default_terraform_version" {
-  type = string
+  type        = string
   description = "The default terraform version for workspaces"
 }
 
-variable oauth_token_id {
+variable "oauth_token_id" {
   type        = string
   description = "Bitbucket OAuth token Id used to by TFC. Associate a workspace with this VCS"
 }
 
-variable aws_access_key_id {
+variable "aws_access_key_id" {
   type        = string
-  sensitive = false
+  sensitive   = false
   description = "The default credentials used in the created workspaces."
 }
 
-variable aws_secret_access_key {
+variable "aws_secret_access_key" {
   type        = string
-  sensitive = true
+  sensitive   = true
   description = "The default credentials used in the created workspaces."
 }
