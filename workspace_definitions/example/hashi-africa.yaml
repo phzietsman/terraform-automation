@@ -1,0 +1,58 @@
+version: "1"
+aws_account_id: "353444730604"
+use_main_aws_credentials: true
+use_main_vcs_credentials: true
+workspace:
+  workspace_name: "hashi-africa-demo"
+  workspace_description: "sample terraform deployment"
+  auto_apply: False
+  working_directory: ""
+  terraform_version: "0.14.0"
+  vcs_repo:
+    identifier: "phzietsman/terraform-aws-sample-deployment"
+    branch: "main"
+    oauth_token_id: ""
+  trigger_prefixes:
+    - "/modules"
+  variables:
+    default:
+      - key: "region"
+        description: "The default region for the application / deployment"
+        value: eu-west-1
+      - key: "environment"
+        description: "Will this deploy a development (dev) or production (prod) environment"
+        value: dev
+      - key: "code_repo"
+        description: "Points to the source code used to deploy the resources {{repo}} [{{branch}}]"
+        value: "phzietsman/terraform-aws-sample-deployment [main]"
+      - key: "namespace"
+        description: "Used to identify which part of the application these resources belong to (auth, infra, api, web, data)"
+        value: infra 
+      - key: "application_name"
+        description: "Used in naming conventions, expecting an object"
+        value: '{"short" = "had", "long" = "hashi-africa-demo" }'
+        hcl: true
+      - key: "nukeable"
+        description: "Can these resources be cleaned up. Will be ignored for prod environments"
+        value: true
+      - key: "client_name"
+        description: "Used in naming conventions, expecting an object"
+        value: '{"short" = "cat", "long" = "cloudandthings.io" }'
+        hcl: true
+      - key: "purpose"
+        description: "Used for cost allocation purposes"
+        value: rnd
+      - key: "owner"
+        description: "Used to find resources owners, expects an email address"
+        value: "paul@cloudandthings.io"
+    terraform: 
+      - key: "assume_role_arn"
+        value: "arn:aws:iam::353444730604:role/AWSControlTowerExecution"
+        description: ""
+        sensitive: false
+        hcl: false
+      - key: "assume_role_session_name"
+        value: "hashiafrica"
+        description: ""
+        sensitive: false
+        hcl: false
