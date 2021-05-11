@@ -86,9 +86,9 @@ locals {
     }
   }
 
-  default_variables = local.create_workspace ? local.default_variables_pre_check : {}
-  tf_variables      = local.create_workspace ? local.tf_variables_pre_check : {}
-  env_variables     = local.create_workspace ? local.env_variables_pre_check : {}
+  default_variables = local.create_workspace == 1 ? local.default_variables_pre_check : {}
+  tf_variables      = local.create_workspace == 1 ? local.tf_variables_pre_check : {}
+  env_variables     = local.create_workspace == 1 ? local.env_variables_pre_check : {}
 
 }
 
