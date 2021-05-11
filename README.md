@@ -111,7 +111,7 @@ variable "environment" {
 
 variable "code_repo" {
   type        = string
-  description = "Points to the source code used to deploy the resources {{repo}} [{{branch}}]"
+  description = "Points to the source code used to deploy the resources {{repo}}:{{branch}}"
 }
 
 variable "namespace" {

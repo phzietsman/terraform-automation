@@ -23,8 +23,8 @@ workspace:
         description: "Will this deploy a development (dev) or production (prod) environment"
         value: dev
       - key: "code_repo"
-        description: "Points to the source code used to deploy the resources {{repo}} [{{branch}}]"
-        value: "phzietsman/terraform-aws-sample-deployment [main]"
+        description: "Points to the source code used to deploy the resources {{repo}}:{{branch}}"
+        value: "phzietsman/terraform-aws-sample-deployment:main"
       - key: "namespace"
         description: "Used to identify which part of the application these resources belong to (auth, infra, api, web, data)"
         value: infra 

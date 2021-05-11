@@ -23,8 +23,8 @@ workspace:
         description: "Will this deploy a development (dev) or production (prod) environment"
         value: dev|prod
       - key: "code_repo"
-        description: "Points to the source code used to deploy the resources {{repo}} [{{branch}}]"
-        value: "{{repo}} [{{branch}}]"
+        description: "Points to the source code used to deploy the resources {{repo}}:{{branch}}"
+        value: "{{repo}}:{{branch}}"
       - key: "namespace"
         description: "Used to identify which part of the application these resources belong to (auth, infra, api, web, data)"
         value: auth|infra|api|web|data 
