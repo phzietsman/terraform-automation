@@ -52,7 +52,7 @@ locals {
     var.environment,
     var.namespace
   ])
-}∏
+}
 
 // =============================
 // Output
@@ -133,7 +133,7 @@ variable "application_name" {
 
   validation {
     condition     = length(var.application_name["short"]) <= 5
-    error_message = "application_name[\"short\"] needs to be less or equal to 5 chars"
+    error_message = "The application_name[\"short\"] needs to be less or equal to 5 chars."
   }
 
 }
@@ -152,7 +152,7 @@ variable "client_name" {
 
   validation {
     condition     = length(var.client_name["short"]) <= 5
-    error_message = "client_name[\"short\"] needs to be less or equal to 5 chars"
+    error_message = "The client_name[\"short\"] needs to be less or equal to 5 chars."
   }
 }
 
